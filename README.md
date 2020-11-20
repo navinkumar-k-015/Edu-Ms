@@ -1,5 +1,5 @@
-# Edu-Ms
-Offline Interactive Classroom
+# Edu Ms
+An Offline Interactive Classroom
 
 # Problem Statement - 
   Due to Covid-19,  the students got stuck in their homes, but most of them are facing network issues like no internet, low bandwidth and, truncated bandwidth caps.
