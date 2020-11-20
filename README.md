@@ -1,16 +1,16 @@
-# Edu Ms
+# Edu MS
 An Offline Interactive Classroom
 
 # Problem Statement - 
   Due to Covid-19,  the students got stuck in their homes, but most of them are facing network issues like no internet, low bandwidth and, truncated bandwidth caps.
   These problems have an immense impact on the education and its quality. Find the best solution to overcome these internet issues and provide hassle-free interaction with the       instructor.
   
-# Our Hack 
+# Our Hack -
   Making a cross-platform application which works without the internet access and runs solely on SMS exchanges.
    - app needs to be installed only on the instructor's smartphone.
    - students can use smartphones as well as keypad phone (any device which supports SMS exchange).
    - instructer can make multiple questions beforehand and can send them in one-click.
    - Auto evaluation of responces (uses predefined prefixes to ease the process of answering).
    - Live graphical data representaion of student responcees (most probably pie chart if time permits).
-   - user friendly UI 
+   - User friendly UI 
    - 🔋 Batteries included 😁.
