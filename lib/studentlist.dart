@@ -61,12 +61,13 @@ class _StudentListState extends State<StudentList> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             FlatButton.icon(
-                              onPressed: () {
+                              onPressed: () async {
                                 if (_form.currentState.validate()) {
                                   _form.currentState.save();
                                   final newstudentinfo = Studentinfo(
                                       newstudentidname, newstudentidphone);
                                   studentbox.add(newstudentinfo);
+                                  await Hive.openBox(newstudentidphone);
                                   Navigator.pop(context);
                                 }
                               },

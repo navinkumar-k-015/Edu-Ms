@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hacksrm/live_class.dart';
+import 'package:hacksrm/make_questions.dart';
 import 'package:hacksrm/studentlist.dart';
 import 'package:hive/hive.dart';
 
@@ -37,7 +39,27 @@ class ClassRoom extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.assessment),
             title: Text("Make questions"),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MakeQuestions(classroom),
+                ),
+              );
+            },
           ),
+          ListTile(
+            leading: Icon(Icons.live_tv_outlined),
+            title: Text("Live Class"),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LiveClass(),
+                ),
+              );
+            },
+          )
         ],
       ),
     );

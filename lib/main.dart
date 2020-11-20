@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hacksrm/class.dart';
+import 'package:hacksrm/models/question.dart';
 import 'package:hacksrm/models/studentinfo.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -9,6 +10,7 @@ void main() async {
   await Hive.initFlutter();
   await Hive.openBox<String>("Classes");
   Hive.registerAdapter(StudentinfoAdapter());
+  Hive.registerAdapter(QuestionAdapter());
   runApp(MyApp());
 }
 
@@ -69,10 +71,14 @@ class _MyHomePageState extends State<MyHomePage> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             FlatButton.icon(
-                              onPressed: () {
+                              onPressed: () async {
                                 if (_form.currentState.validate()) {
                                   _form.currentState.save();
                                   classlist.add(newclassname);
+                                  await Hive.openBox<Question>(
+                                      newclassname + 'questions');
+                                  await Hive.openBox<Question>(
+                                      newclassname + 'questionsSent');
                                   Navigator.pop(context);
                                 }
                               },
