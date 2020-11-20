@@ -8,7 +8,7 @@ An Offline Interactive Classroom
 # Our Hack -
   Making a cross-platform application which works without the internet access and runs solely on SMS exchanges.
    - app needs to be installed only on the instructor's smartphone.
-   - students can use smartphones as well as keypad phone (any device which supports SMS exchange).
+   - students can use smartphones as well as <b>keypad</b> phone (any device which supports SMS exchange).
    - instructer can make multiple questions beforehand and can send them in one-click.
    - Auto evaluation of responces (uses predefined prefixes to ease the process of answering).
    - Live graphical data representaion of student responcees (most probably pie chart if time permits).
