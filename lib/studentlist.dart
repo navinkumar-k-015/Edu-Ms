@@ -196,9 +196,4 @@ class _StudentListState extends State<StudentList> {
     );
   }
 
-  @override
-  void dispose() {
-    Hive.box<Studentinfo>(widget.studentlist).close();
-    super.dispose();
-  }
 }

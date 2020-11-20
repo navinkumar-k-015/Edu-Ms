@@ -53,6 +53,7 @@ class _ReviewPageState extends State<ReviewPage> {
                       final Question newQuestion = Question(widget.question,
                           list[0], list[1], list[2], list[3], correctop);
                       questionBox.add(newQuestion);
+                      onadded();
                     },
                     icon: Icon(Icons.add),
                     label: Text("Add"))
@@ -62,5 +63,10 @@ class _ReviewPageState extends State<ReviewPage> {
         ],
       ),
     );
+  }
+
+  onadded() {
+    int count = 0;
+    Navigator.popUntil(context, (route) => count++ == 2);
   }
 }

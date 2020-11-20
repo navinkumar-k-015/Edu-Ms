@@ -13,6 +13,10 @@ void main() async {
   Hive.registerAdapter(QuestionAdapter());
   runApp(MyApp());
 }
+// class ClassroomArguments{
+//   final String classroom;
+//   ClassroomArguments(this.classroom);
+// }
 
 class MyApp extends StatelessWidget {
   @override
@@ -24,6 +28,12 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: MyHomePage(),
+      // routes: {'/': (context) => MyHomePage(),
+      // ClassroomArguments.routeName: (context) => ClassRoom(),
+      // '/class': (context) => ClassRoom(),
+      // '/': (context) => MyHomePage(),
+      // '/': (context) => MyHomePage(),
+      // },
     );
   }
 }
@@ -110,7 +120,11 @@ class _MyHomePageState extends State<MyHomePage> {
             itemBuilder: (context, index) {
               return ListTile(
                 leading: Icon(Icons.class__outlined),
-                onTap: () {
+                onTap: () async {
+                  await Hive.openBox<Studentinfo>(box.getAt(index) + '-StudentList');
+                  await Hive.openBox<Question>(box.getAt(index) + 'questions');
+                  await Hive.openBox<Question>(
+                      box.getAt(index) + 'questionsSent');
                   Navigator.push(
                     context,
                     MaterialPageRoute(

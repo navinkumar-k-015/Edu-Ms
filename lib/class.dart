@@ -55,7 +55,7 @@ class ClassRoom extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => LiveClass(),
+                  builder: (context) => LiveClass(classroom),
                 ),
               );
             },
