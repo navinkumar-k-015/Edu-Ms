@@ -85,6 +85,8 @@ class _LiveClassState extends State<LiveClass> {
                   qId.toString(), op.toString(), ques.correct == op - 1);
               responses.add(studentResponse);
             } else {
+              _scaffoldkey.currentState.showSnackBar(
+                  SnackBar(content: Text("$phoneNo tried to cheat !!!")));
               print("cheater");
             }
             Hive.box<bool>(widget.classname + qId.toString()).close();
@@ -113,103 +115,122 @@ class _LiveClassState extends State<LiveClass> {
                     Hive.box<MessageLog>(widget.classname + 'messageLogs')
                         .listenable(),
                 builder: (context, Box<MessageLog> box, child) {
-                  return box.length == 0 ? Align(alignment: Alignment.topCenter, child: Text('Start Conversation', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),)) : ListView.builder(
-                    reverse: true,
-                    itemCount: box.length,
-                    itemBuilder: (context, index) {
-                      index = box.length - index - 1;
-                      MessageLog messageLog = box.getAt(index);
-                      return InkWell(
-                        child: MessageBubble(
-                          sender: messageLog.phoneNo,
-                          text: messageLog.message,
-                          isMe: messageLog.senderOrrecever,
-                        ),
-                        onDoubleTap: () {
-                          if (!messageLog.senderOrrecever) {
-                            showDialog(
-                                useSafeArea: false,
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    content: Container(
-                                      width: width * .5,
-                                      height: height * .5,
-                                      child: Column(
-                                        children: [
-                                          Expanded(
-                                              child: SingleChildScrollView(
-                                            child: MessageBubble(
-                                              sender: messageLog.phoneNo,
-                                              text: messageLog.message,
-                                              isMe: messageLog.senderOrrecever,
-                                            ),
-                                          )),
-                                          Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: TextField(
-                                                  controller: private_msg,
-                                                  onChanged: (value) {
-                                                    pvtMsg = value;
-                                                  },
-                                                  decoration: InputDecoration(
-                                                    hintText: 'Send message...',
-                                                    border: InputBorder.none,
+                  return box.length == 0
+                      ? Align(
+                          alignment: Alignment.topCenter,
+                          child: Text(
+                            'Start Conversation',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w800),
+                          ))
+                      : ListView.builder(
+                          reverse: true,
+                          itemCount: box.length,
+                          itemBuilder: (context, index) {
+                            index = box.length - index - 1;
+                            MessageLog messageLog = box.getAt(index);
+                            return InkWell(
+                              child: MessageBubble(
+                                sender: messageLog.phoneNo,
+                                text: messageLog.message,
+                                isMe: messageLog.senderOrrecever,
+                              ),
+                              onDoubleTap: () {
+                                if (!messageLog.senderOrrecever) {
+                                  showDialog(
+                                      useSafeArea: false,
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          content: Container(
+                                            width: width * .5,
+                                            height: height * .5,
+                                            child: Column(
+                                              children: [
+                                                Expanded(
+                                                    child:
+                                                        SingleChildScrollView(
+                                                  child: MessageBubble(
+                                                    sender: messageLog.phoneNo,
+                                                    text: messageLog.message,
+                                                    isMe: messageLog
+                                                        .senderOrrecever,
                                                   ),
+                                                )),
+                                                Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Expanded(
+                                                      child: TextField(
+                                                        controller: private_msg,
+                                                        onChanged: (value) {
+                                                          pvtMsg = value;
+                                                        },
+                                                        decoration:
+                                                            InputDecoration(
+                                                          hintText:
+                                                              'Send message...',
+                                                          border:
+                                                              InputBorder.none,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    FlatButton(
+                                                        onPressed: () {
+                                                          SmsSender sender =
+                                                              new SmsSender();
+                                                          String address =
+                                                              messageLog
+                                                                  .phoneNo;
+                                                          SmsMessage message =
+                                                              new SmsMessage(
+                                                                  address,
+                                                                  pvtMsg);
+                                                          sender
+                                                              .sendSms(message);
+                                                          message.onStateChanged
+                                                              .listen(
+                                                            (state) {
+                                                              if (state ==
+                                                                  SmsMessageState
+                                                                      .Sent) {
+                                                                print(
+                                                                    "SMS is sent!");
+                                                              } else if (state ==
+                                                                  SmsMessageState
+                                                                      .Delivered) {
+                                                                print(
+                                                                    "SMS is delivered!");
+                                                              } else if (state ==
+                                                                  SmsMessageState
+                                                                      .Fail) {
+                                                                _scaffoldkey
+                                                                    .currentState
+                                                                    .showSnackBar(SnackBar(
+                                                                        content:
+                                                                            Text("message not dilivered to $address")));
+                                                              }
+                                                            },
+                                                          );
+                                                          private_msg.clear();
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child:
+                                                            Icon(Icons.send)),
+                                                  ],
                                                 ),
-                                              ),
-                                              FlatButton(
-                                                  onPressed: () {
-                                                    SmsSender sender =
-                                                        new SmsSender();
-                                                    String address =
-                                                        messageLog.phoneNo;
-                                                    SmsMessage message =
-                                                        new SmsMessage(
-                                                            address, pvtMsg);
-                                                    sender.sendSms(message);
-                                                    message.onStateChanged
-                                                        .listen(
-                                                      (state) {
-                                                        if (state ==
-                                                            SmsMessageState
-                                                                .Sent) {
-                                                          print("SMS is sent!");
-                                                        } else if (state ==
-                                                            SmsMessageState
-                                                                .Delivered) {
-                                                          print(
-                                                              "SMS is delivered!");
-                                                        } else if (state ==
-                                                            SmsMessageState
-                                                                .Fail) {
-                                                          _scaffoldkey
-                                                              .currentState
-                                                              .showSnackBar(SnackBar(
-                                                                  content: Text(
-                                                                      "message not dilivered to $address")));
-                                                        }
-                                                      },
-                                                    );
-                                                    private_msg.clear();
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: Icon(Icons.send)),
-                                            ],
+                                              ],
+                                            ),
                                           ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                });
-                          }
-                        },
-                      );
-                    },
-                  );
+                                        );
+                                      });
+                                }
+                              },
+                            );
+                          },
+                        );
                 },
               )),
               Container(
@@ -366,7 +387,9 @@ class _LiveClassState extends State<LiveClass> {
                                       style: TextStyle(color: Colors.black),
                                     ),
                                     color: Colors.white,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
                                     onPressed: () async {
                                       await Hive.openBox<bool>(
                                           widget.classname + qId.toString());
