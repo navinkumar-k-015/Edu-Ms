@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:hacksrm/make_questions.dart';
 import 'package:hacksrm/messagebubble.dart';
 import 'package:hacksrm/models/messagelogs.dart';
 import 'package:hacksrm/models/question.dart';
 import 'package:hacksrm/models/studentinfo.dart';
+import 'back_button.dart';
+import 'models/studentResponse.dart';
 import 'package:sms/sms.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -30,6 +33,7 @@ class _LiveClassState extends State<LiveClass> {
   void initState() {
     print("init");
     Hive.openBox<List<int>>(widget.classname + "qId_response");
+
     willitwork = receiver.onSmsReceived.listen((SmsMessage msg) async {
       String message = msg.body.trim();
       String phoneNo = msg.address;
@@ -49,8 +53,14 @@ class _LiveClassState extends State<LiveClass> {
             int op = int.parse(
                 message.substring(message.length - 1, message.length));
             await Hive.openBox<bool>(widget.classname + qId.toString());
+            await Hive.openBox<StudentResponse>(phoneNo + "-Responses");
             Box<List<int>> classname_qid_response =
                 Hive.box<List<int>>(widget.classname + "qId_response");
+
+            Box<StudentResponse> responses =
+                Hive.box<StudentResponse>(phoneNo + "-Responses");
+            StudentResponse studentResponse;
+
             if (Hive.box<bool>(widget.classname + qId.toString())
                     .get(phoneNo) ==
                 null) {
@@ -70,10 +80,15 @@ class _LiveClassState extends State<LiveClass> {
                 classname_qid_response.put(qId, [response[0], response[1] + 1]);
                 print(phoneNo + "u r wrong");
               }
+
+              studentResponse = new StudentResponse(
+                  qId.toString(), op.toString(), ques.correct == op - 1);
+              responses.add(studentResponse);
             } else {
               print("cheater");
             }
             Hive.box<bool>(widget.classname + qId.toString()).close();
+            responses.close();
           } catch (e) {}
         }
       }
@@ -86,622 +101,662 @@ class _LiveClassState extends State<LiveClass> {
     double radius = 40;
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-    return SafeArea(
+    return NeumorphicBackground(
+      padding: EdgeInsets.all(8),
       child: Scaffold(
-        key: _scaffoldkey,
-        body: Column(
-          children: [
-            Expanded(
-                child: ValueListenableBuilder(
-              valueListenable:
-                  Hive.box<MessageLog>(widget.classname + 'messageLogs')
-                      .listenable(),
-              builder: (context, Box<MessageLog> box, child) {
-                return ListView.builder(
-                  reverse: true,
-                  itemCount: box.length,
-                  itemBuilder: (context, index) {
-                    index = box.length - index - 1;
-                    MessageLog messageLog = box.getAt(index);
-                    return InkWell(
-                      child: MessageBubble(
-                        sender: messageLog.phoneNo,
-                        text: messageLog.message,
-                        isMe: messageLog.senderOrrecever,
-                      ),
-                      onDoubleTap: () {
-                        if (!messageLog.senderOrrecever) {
-                          showDialog(
-                              useSafeArea: false,
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  content: Container(
-                                    width: width * .5,
-                                    height: height * .5,
-                                    child: Column(
-                                      children: [
-                                        Expanded(
-                                            child: SingleChildScrollView(
-                                          child: MessageBubble(
-                                            sender: messageLog.phoneNo,
-                                            text: messageLog.message,
-                                            isMe: messageLog.senderOrrecever,
-                                          ),
-                                        )),
-                                        Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: <Widget>[
-                                            Expanded(
-                                              child: TextField(
-                                                controller: private_msg,
-                                                onChanged: (value) {
-                                                  pvtMsg = value;
-                                                },
-                                                decoration: InputDecoration(
-                                                  hintText: 'Send message...',
-                                                  border: InputBorder.none,
+          key: _scaffoldkey,
+          body: Column(
+            children: [
+              Expanded(
+                  child: ValueListenableBuilder(
+                valueListenable:
+                    Hive.box<MessageLog>(widget.classname + 'messageLogs')
+                        .listenable(),
+                builder: (context, Box<MessageLog> box, child) {
+                  return ListView.builder(
+                    reverse: true,
+                    itemCount: box.length,
+                    itemBuilder: (context, index) {
+                      index = box.length - index - 1;
+                      MessageLog messageLog = box.getAt(index);
+                      return InkWell(
+                        child: MessageBubble(
+                          sender: messageLog.phoneNo,
+                          text: messageLog.message,
+                          isMe: messageLog.senderOrrecever,
+                        ),
+                        onDoubleTap: () {
+                          if (!messageLog.senderOrrecever) {
+                            showDialog(
+                                useSafeArea: false,
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    content: Container(
+                                      width: width * .5,
+                                      height: height * .5,
+                                      child: Column(
+                                        children: [
+                                          Expanded(
+                                              child: SingleChildScrollView(
+                                            child: MessageBubble(
+                                              sender: messageLog.phoneNo,
+                                              text: messageLog.message,
+                                              isMe: messageLog.senderOrrecever,
+                                            ),
+                                          )),
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: TextField(
+                                                  controller: private_msg,
+                                                  onChanged: (value) {
+                                                    pvtMsg = value;
+                                                  },
+                                                  decoration: InputDecoration(
+                                                    hintText: 'Send message...',
+                                                    border: InputBorder.none,
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                            FlatButton(
-                                                onPressed: () {
-                                                  SmsSender sender =
-                                                      new SmsSender();
-                                                  String address =
-                                                      messageLog.phoneNo;
-                                                  SmsMessage message =
-                                                      new SmsMessage(
-                                                          address, pvtMsg);
-                                                  sender.sendSms(message);
-                                                  message.onStateChanged.listen(
-                                                    (state) {
-                                                      if (state ==
-                                                          SmsMessageState
-                                                              .Sent) {
-                                                        print("SMS is sent!");
-                                                      } else if (state ==
-                                                          SmsMessageState
-                                                              .Delivered) {
-                                                        print(
-                                                            "SMS is delivered!");
-                                                      } else if (state ==
-                                                          SmsMessageState
-                                                              .Fail) {
-                                                        _scaffoldkey
-                                                            .currentState
-                                                            .showSnackBar(SnackBar(
-                                                                content: Text(
-                                                                    "message not dilivered to $address")));
-                                                      }
-                                                    },
-                                                  );
-                                                  private_msg.clear();
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Icon(Icons.send)),
-                                          ],
-                                        ),
-                                      ],
+                                              FlatButton(
+                                                  onPressed: () {
+                                                    SmsSender sender =
+                                                        new SmsSender();
+                                                    String address =
+                                                        messageLog.phoneNo;
+                                                    SmsMessage message =
+                                                        new SmsMessage(
+                                                            address, pvtMsg);
+                                                    sender.sendSms(message);
+                                                    message.onStateChanged
+                                                        .listen(
+                                                      (state) {
+                                                        if (state ==
+                                                            SmsMessageState
+                                                                .Sent) {
+                                                          print("SMS is sent!");
+                                                        } else if (state ==
+                                                            SmsMessageState
+                                                                .Delivered) {
+                                                          print(
+                                                              "SMS is delivered!");
+                                                        } else if (state ==
+                                                            SmsMessageState
+                                                                .Fail) {
+                                                          _scaffoldkey
+                                                              .currentState
+                                                              .showSnackBar(SnackBar(
+                                                                  content: Text(
+                                                                      "message not dilivered to $address")));
+                                                        }
+                                                      },
+                                                    );
+                                                    private_msg.clear();
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Icon(Icons.send)),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                );
-                              });
-                        }
+                                  );
+                                });
+                          }
+                        },
+                      );
+                    },
+                  );
+                },
+              )),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border(
+                    top: BorderSide(color: Colors.black, width: 2.0),
+                  ),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: TextField(
+                        controller: messageTextController,
+                        onChanged: (value) {
+                          messageText = value;
+                        },
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 20.0),
+                          hintText: 'Type your message here...',
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                    FlatButton(
+                      onPressed: () {
+                        sendSMS(messageText);
+                        messageTextController.clear();
                       },
-                    );
-                  },
-                );
-              },
-            )),
-            Container(
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(color: Colors.lightBlueAccent, width: 2.0),
+                      child: Text(
+                        'Send',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18.0,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Expanded(
-                    child: TextField(
-                      controller: messageTextController,
-                      onChanged: (value) {
-                        messageText = value;
+            ],
+          ),
+          drawer: NeumorphicBackground(
+            child: Drawer(
+              child: ValueListenableBuilder(
+                valueListenable:
+                    Hive.box<Question>(widget.classname + 'questionsSent')
+                        .listenable(),
+                builder: (context, Box<Question> boxs, child) {
+                  return Align(
+                    alignment: Alignment.topCenter,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      reverse: true,
+                      itemCount: boxs.length,
+                      itemBuilder: (context, index) {
+                        var qId = boxs.keyAt(index);
+                        Question _qus = boxs.getAt(index);
+
+                        return ValueListenableBuilder(
+                          valueListenable: Hive.box<List<int>>(
+                                  widget.classname + "qId_response")
+                              .listenable(),
+                          builder: (context, Box<List<int>> box, child) {
+                            List<int> stats =
+                                box.get(qId, defaultValue: [0, 0]);
+                            int length = Hive.box<Studentinfo>(
+                                    widget.classname + "-StudentList")
+                                .length;
+                            // double correct = stats[0].toDouble();
+                            return ExpansionTile(
+                              title: Text(_qus.question, overflow: TextOverflow.ellipsis, maxLines: 1,),
+                              children: [
+                                Container(
+                                  width: width * .38,
+                                  height: width * .38,
+                                  child: Center(
+                                    child: Card(
+                                      elevation: 5,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(100.0)),
+                                      child: PieChart(PieChartData(
+                                          sectionsSpace: 3.0,
+                                          centerSpaceRadius: 26.66,
+                                          borderData: FlBorderData(
+                                            show: false,
+                                          ),
+                                          sections: [
+                                            PieChartSectionData(
+                                                showTitle: stats[1] == 0
+                                                    ? false
+                                                    : true,
+                                                title: stats[1].toString(),
+                                                titleStyle: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16),
+                                                radius: radius,
+                                                value: stats[1].toDouble(),
+                                                color: Colors.redAccent),
+                                            PieChartSectionData(
+                                                title: (length -
+                                                        stats[0] -
+                                                        stats[1])
+                                                    .toString(),
+                                                showTitle: length -
+                                                            stats[0] -
+                                                            stats[1] ==
+                                                        0
+                                                    ? false
+                                                    : true,
+                                                titleStyle: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16),
+                                                radius: radius,
+                                                value: (length -
+                                                        stats[0] -
+                                                        stats[1])
+                                                    .toDouble(),
+                                                color: Color(0xff0086F3)),
+                                            PieChartSectionData(
+                                                showTitle: stats[0] == 0
+                                                    ? false
+                                                    : true,
+                                                title: stats[0].toString(),
+                                                titleStyle: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16),
+                                                radius: radius,
+                                                value: stats[0].toDouble(),
+                                                color: Color(0xff00D27C)),
+                                          ])),
+                                    ),
+                                  ),
+                                ),
+                                RaisedButton(
+                                  child: Text("Responses"),
+                                  onPressed: () async {
+                                    await Hive.openBox<bool>(
+                                        widget.classname + qId.toString());
+                                    var student = Hive.box<Studentinfo>(
+                                        widget.classname + "-StudentList");
+                                    showDialog(
+                                        useSafeArea: false,
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            content: Container(
+                                              width: width * .8,
+                                              height: height * .8,
+                                              child: Column(
+                                                children: [
+                                                  Text(
+                                                    "Responses",
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  Divider(
+                                                    thickness: 2.0,
+                                                    color: Colors.blueAccent,
+                                                  ),
+                                                  ValueListenableBuilder(
+                                                    valueListenable:
+                                                        Hive.box<bool>(widget
+                                                                    .classname +
+                                                                qId.toString())
+                                                            .listenable(),
+                                                    builder: (context,
+                                                        Box<bool> box, child) {
+                                                      return ListView.builder(
+                                                        shrinkWrap: true,
+                                                        itemCount:
+                                                            student.length,
+                                                        itemBuilder:
+                                                            (context, index) {
+                                                          Studentinfo
+                                                              studentinfo =
+                                                              student
+                                                                  .getAt(index);
+                                                          return ListTile(
+                                                            title: Text((index +
+                                                                        1)
+                                                                    .toString() +
+                                                                ") " +
+                                                                studentinfo
+                                                                    .name),
+                                                            trailing: (box.get(
+                                                                        studentinfo
+                                                                            .phone_no)) ==
+                                                                    null
+                                                                ? Icon(
+                                                                    Icons
+                                                                        .help_outline_outlined,
+                                                                    color: Colors
+                                                                        .blueAccent,
+                                                                  )
+                                                                : box.get(studentinfo
+                                                                            .phone_no) ==
+                                                                        true
+                                                                    ? Icon(
+                                                                        Icons
+                                                                            .check,
+                                                                        color: Colors
+                                                                            .green,
+                                                                      )
+                                                                    : Icon(
+                                                                        Icons
+                                                                            .close,
+                                                                        color: Colors
+                                                                            .red,
+                                                                      ),
+                                                          );
+                                                        },
+                                                      );
+                                                    },
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        }).whenComplete(() {
+                                      Hive.box<bool>(
+                                              widget.classname + qId.toString())
+                                          .close();
+                                    });
+                                  },
+                                  color: Colors.yellow,
+                                )
+                              ],
+                            );
+                          },
+                        );
                       },
-                      decoration: InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 20.0),
-                        hintText: 'Type your message here...',
-                        border: InputBorder.none,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          endDrawer: Container(
+              color: NeumorphicTheme.baseColor(context),
+              width: width * .95,
+              child: Drawer(
+                child: ValueListenableBuilder(
+                  valueListenable:
+                      Hive.box<Question>(widget.classname + 'questions')
+                          .listenable(),
+                  builder: (context, Box<Question> box, widgets) {
+                    return Column(
+                      children: [
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: box.length,
+                            itemBuilder: (context, index) {
+                              Question _qus = box.getAt(index);
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Card(
+                                    elevation: 5,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        children: [
+                                          ExpansionTile(
+                                            title: RichText(
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 2,
+                                              strutStyle: StrutStyle(
+                                                  fontSize: 12.0,
+                                                  fontWeight: FontWeight.bold),
+                                              text: TextSpan(
+                                                  style: TextStyle(
+                                                      color: Colors.black),
+                                                  text: _qus.question),
+                                            ),
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
+                                                children: [
+                                                  Expanded(
+                                                    child: Chip(
+                                                      backgroundColor: _qus
+                                                                  .correct ==
+                                                              0
+                                                          ? Colors
+                                                              .greenAccent[100]
+                                                          : Colors
+                                                              .blueAccent[100],
+                                                      label: Text(
+                                                        _qus.option1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    child: Chip(
+                                                      backgroundColor: _qus
+                                                                  .correct ==
+                                                              1
+                                                          ? Colors
+                                                              .greenAccent[100]
+                                                          : Colors
+                                                              .blueAccent[100],
+                                                      label: Text(
+                                                        _qus.option2,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
+                                                children: [
+                                                  Expanded(
+                                                    child: Chip(
+                                                      backgroundColor: _qus
+                                                                  .correct ==
+                                                              2
+                                                          ? Colors
+                                                              .greenAccent[100]
+                                                          : Colors
+                                                              .blueAccent[100],
+                                                      label: Text(
+                                                        _qus.option3,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    child: Chip(
+                                                      backgroundColor: _qus
+                                                                  .correct ==
+                                                              3
+                                                          ? Colors
+                                                              .greenAccent[100]
+                                                          : Colors
+                                                              .blueAccent[100],
+                                                      label: Text(
+                                                        _qus.option4,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: SizedBox(
+                                                  width: width * .75 / 2,
+                                                  child: RaisedButton(
+                                                    color: Colors.redAccent,
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Icon(
+                                                          Icons.delete,
+                                                          color: Colors.black54,
+                                                        ),
+                                                        Text(
+                                                          'Delete',
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .black54),
+                                                        )
+                                                      ],
+                                                    ),
+                                                    onPressed: () {
+                                                      box.deleteAt(index);
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: SizedBox(
+                                                  width: width * .75 / 2,
+                                                  child: RaisedButton(
+                                                    color: Colors.green[500],
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Icon(
+                                                          Icons.send,
+                                                          color: Colors.black54,
+                                                        ),
+                                                        Text('  Send')
+                                                      ],
+                                                    ),
+                                                    onPressed: () {
+                                                      sendSMS(
+                                                          "${_qus.question}\n\n1) ${_qus.option1}\n2) ${_qus.option2}\n3) ${_qus.option3}\n4) ${_qus.option4}",
+                                                          qId: box.keyAt(index),
+                                                          qus: _qus);
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    )),
+                              );
+                            },
+                          ),
+                        ),
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: RaisedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        MakeQuestions(widget.classname),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                "Add a Question",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              color: Colors.blueAccent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    );
+                  },
+                ),
+              )),
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(110),
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 18.0),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Align(
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        children: [
+                          NeumorphicBack(),
+                          SizedBox(width: 5),
+                          NeumorphicButton(
+                              onPressed: () {
+                                _scaffoldkey.currentState.openDrawer();
+                              },
+                              child: Icon(Icons.pie_chart))
+                        ],
+                      )),
+                  Center(
+                    child: Text(
+                      'Live Class',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                        color: NeumorphicTheme.isUsingDark(context)
+                            ? Colors.white70
+                            : Colors.black87,
                       ),
                     ),
                   ),
-                  FlatButton(
-                    onPressed: () {
-                      sendSMS(messageText);
-                      messageTextController.clear();
-                    },
-                    child: Text(
-                      'Send',
-                      style: TextStyle(
-                        color: Colors.lightBlueAccent,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18.0,
-                      ),
-                    ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: NeumorphicButton(
+                        onPressed: () {
+                          _scaffoldkey.currentState.openEndDrawer();
+                        },
+                        child: Icon(Icons.question_answer_outlined)),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
-        drawer: Drawer(
-          child: ValueListenableBuilder(
-            valueListenable:
-                Hive.box<Question>(widget.classname + 'questionsSent')
-                    .listenable(),
-            builder: (context, Box<Question> boxs, child) {
-              return Align(
-                alignment: Alignment.topCenter,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  reverse: true,
-                  itemCount: boxs.length,
-                  itemBuilder: (context, index) {
-                    var qId = boxs.keyAt(index);
-                    Question _qus = boxs.getAt(index);
-
-                    return ValueListenableBuilder(
-                      valueListenable:
-                          Hive.box<List<int>>(widget.classname + "qId_response")
-                              .listenable(),
-                      builder: (context, Box<List<int>> box, child) {
-                        List<int> stats = box.get(qId, defaultValue: [0, 0]);
-                        int length = Hive.box<Studentinfo>(
-                                widget.classname + "-StudentList")
-                            .length;
-                        // double correct = stats[0].toDouble();
-                        return ExpansionTile(
-                          title: Text(_qus.question),
-                          children: [
-                            Container(
-                              width: width * .38,
-                              height: width * .38,
-                              child: Center(
-                                child: Card(
-                                  elevation: 5,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(100.0)),
-                                  child: PieChart(PieChartData(
-                                      sectionsSpace: 3.0,
-                                      centerSpaceRadius: 26.66,
-                                      borderData: FlBorderData(
-                                        show: false,
-                                      ),
-                                      sections: [
-                                        PieChartSectionData(
-                                            showTitle:
-                                                stats[1] == 0 ? false : true,
-                                            title: stats[1].toString(),
-                                            titleStyle: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
-                                            radius: radius,
-                                            value: stats[1].toDouble(),
-                                            color: Colors.redAccent),
-                                        PieChartSectionData(
-                                            title:
-                                                (length - stats[0] - stats[1])
-                                                    .toString(),
-                                            showTitle:
-                                                length - stats[0] - stats[1] ==
-                                                        0
-                                                    ? false
-                                                    : true,
-                                            titleStyle: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
-                                            radius: radius,
-                                            value:
-                                                (length - stats[0] - stats[1])
-                                                    .toDouble(),
-                                            color: Color(0xff0086F3)),
-                                        PieChartSectionData(
-                                            showTitle:
-                                                stats[0] == 0 ? false : true,
-                                            title: stats[0].toString(),
-                                            titleStyle: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
-                                            radius: radius,
-                                            value: stats[0].toDouble(),
-                                            color: Color(0xff00D27C)),
-                                      ])),
-                                ),
-                              ),
-                            ),
-                            RaisedButton(
-                              child: Text("Responses"),
-                              onPressed: () async {
-                                await Hive.openBox<bool>(
-                                    widget.classname + qId.toString());
-                                var student = Hive.box<Studentinfo>(
-                                    widget.classname + "-StudentList");
-                                showDialog(
-                                    useSafeArea: false,
-                                    context: context,
-                                    builder: (context) {
-                                      return AlertDialog(
-                                        content: Container(
-                                          width: width * .8,
-                                          height: height * .8,
-                                          child: Column(
-                                            children: [
-                                              Text(
-                                                "Responses",
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              Divider(
-                                                thickness: 2.0,
-                                                color: Colors.blueAccent,
-                                              ),
-                                              ValueListenableBuilder(
-                                                valueListenable: Hive.box<bool>(
-                                                        widget.classname +
-                                                            qId.toString())
-                                                    .listenable(),
-                                                builder: (context,
-                                                    Box<bool> box, child) {
-                                                  return ListView.builder(
-                                                    shrinkWrap: true,
-                                                    itemCount: student.length,
-                                                    itemBuilder:
-                                                        (context, index) {
-                                                      Studentinfo studentinfo =
-                                                          student.getAt(index);
-
-                                                      return ListTile(
-                                                        title: Text((index + 1)
-                                                                .toString() +
-                                                            ") " +
-                                                            studentinfo.name),
-                                                        trailing: (box.get(
-                                                                    studentinfo
-                                                                        .phone_no)) ==
-                                                                null
-                                                            ? Icon(
-                                                                Icons
-                                                                    .help_outline_outlined,
-                                                                color: Colors
-                                                                    .blueAccent,
-                                                              )
-                                                            : box.get(studentinfo
-                                                                        .phone_no) ==
-                                                                    true
-                                                                ? Icon(
-                                                                    Icons.check,
-                                                                    color: Colors
-                                                                        .green,
-                                                                  )
-                                                                : Icon(
-                                                                    Icons.close,
-                                                                    color: Colors
-                                                                        .red,
-                                                                  ),
-                                                      );
-                                                    },
-                                                  );
-                                                },
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    }).whenComplete(() {
-                                  Hive.box<bool>(
-                                          widget.classname + qId.toString())
-                                      .close();
-                                });
-                              },
-                              color: Colors.yellow,
-                            )
-                          ],
-                        );
-                      },
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-        ),
-        endDrawer: Container(
-            width: width * .95,
-            child: Drawer(
-              child: ValueListenableBuilder(
-                valueListenable:
-                    Hive.box<Question>(widget.classname + 'questions')
-                        .listenable(),
-                builder: (context, Box<Question> box, widgets) {
-                  return Column(
-                    children: [
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: box.length,
-                          itemBuilder: (context, index) {
-                            Question _qus = box.getAt(index);
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Card(
-                                  elevation: 5,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12)),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      children: [
-                                        ExpansionTile(
-                                          title: RichText(
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 2,
-                                            strutStyle: StrutStyle(
-                                                fontSize: 12.0,
-                                                fontWeight: FontWeight.bold),
-                                            text: TextSpan(
-                                                style: TextStyle(
-                                                    color: Colors.black),
-                                                text: _qus.question),
-                                          ),
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
-                                              children: [
-                                                Expanded(
-                                                  child: Chip(
-                                                    backgroundColor: _qus
-                                                                .correct ==
-                                                            0
-                                                        ? Colors
-                                                            .greenAccent[100]
-                                                        : Colors
-                                                            .blueAccent[100],
-                                                    label: Text(
-                                                      _qus.option1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: Chip(
-                                                    backgroundColor: _qus
-                                                                .correct ==
-                                                            1
-                                                        ? Colors
-                                                            .greenAccent[100]
-                                                        : Colors
-                                                            .blueAccent[100],
-                                                    label: Text(
-                                                      _qus.option2,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
-                                              children: [
-                                                Expanded(
-                                                  child: Chip(
-                                                    backgroundColor: _qus
-                                                                .correct ==
-                                                            2
-                                                        ? Colors
-                                                            .greenAccent[100]
-                                                        : Colors
-                                                            .blueAccent[100],
-                                                    label: Text(
-                                                      _qus.option3,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: Chip(
-                                                    backgroundColor: _qus
-                                                                .correct ==
-                                                            3
-                                                        ? Colors
-                                                            .greenAccent[100]
-                                                        : Colors
-                                                            .blueAccent[100],
-                                                    label: Text(
-                                                      _qus.option4,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: SizedBox(
-                                                width: width * .75 / 2,
-                                                child: RaisedButton(
-                                                  color: Colors.redAccent,
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Icon(
-                                                        Icons.delete,
-                                                        color: Colors.black54,
-                                                      ),
-                                                      Text(
-                                                        'Delete',
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.black54),
-                                                      )
-                                                    ],
-                                                  ),
-                                                  onPressed: () {
-                                                    box.deleteAt(index);
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: SizedBox(
-                                                width: width * .75 / 2,
-                                                child: RaisedButton(
-                                                  color: Colors.green[500],
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Icon(
-                                                        Icons.send,
-                                                        color: Colors.black54,
-                                                      ),
-                                                      Text('  Send')
-                                                    ],
-                                                  ),
-                                                  onPressed: () {
-                                                    sendSMS(
-                                                        "${_qus.question}\n\n1) ${_qus.option1}\n2) ${_qus.option2}\n3) ${_qus.option3}\n4) ${_qus.option4}",
-                                                        qId: box.keyAt(index),
-                                                        qus: _qus);
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  )),
-                            );
-                          },
-                        ),
-                      ),
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: RaisedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      MakeQuestions(widget.classname),
-                                ),
-                              );
-                            },
-                            child: Text(
-                              "Add a Question",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            color: Colors.blueAccent,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18.0),
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  );
-                },
-              ),
-            )),
-        appBar: AppBar(
-          actions: [
-            IconButton(
-              icon: Icon(Icons.question_answer_outlined),
-              onPressed: () => _scaffoldkey.currentState.openEndDrawer(),
-            )
-          ],
-        ),
-      ),
+          )),
     );
   }
 
   void sendSMS(String messageEntered, {int qId, Question qus}) async {
-    if (qId == null && qus == null) {
-      Box<MessageLog> messagelogdb =
-          Hive.box<MessageLog>(widget.classname + 'messageLogs');
-      Box<Studentinfo> studentbox =
-          Hive.box<Studentinfo>(widget.classname + "-StudentList");
-      for (var i = 0; i < studentbox.length; i++) {
-        Studentinfo _studentinfo = studentbox.getAt(i);
-        SmsSender sender = new SmsSender();
-        String address = _studentinfo.phone_no;
-        SmsMessage message = new SmsMessage(address, messageEntered);
-        sender.sendSms(message);
-        message.onStateChanged.listen(
-          (state) {
-            if (state == SmsMessageState.Sent) {
-              print("SMS is sent!");
-            } else if (state == SmsMessageState.Delivered) {
-              print("SMS is delivered!");
-            } else if (state == SmsMessageState.Fail) {
-              _scaffoldkey.currentState.showSnackBar(
-                  SnackBar(content: Text("message not dilivered to $address")));
-            }
-          },
-        );
-      }
-      MessageLog messageLog = MessageLog(messageEntered, "its You", true);
-      messagelogdb.add(messageLog);
-    } else {
+    if (qId != null && qus != null) {
       messageEntered = "Question ID : $qId\n" + messageEntered;
-      Box<Studentinfo> studentbox =
-          Hive.box<Studentinfo>(widget.classname + "-StudentList");
-      for (var i = 0; i < studentbox.length; i++) {
-        Studentinfo _studentinfo = studentbox.getAt(i);
-        SmsSender sender = new SmsSender();
-        String address = _studentinfo.phone_no;
-        SmsMessage message = new SmsMessage(address, messageEntered);
-        sender.sendSms(message);
-        message.onStateChanged.listen(
-          (state) {
-            if (state == SmsMessageState.Sent) {
-              print("SMS is sent!");
-            } else if (state == SmsMessageState.Delivered) {
-              print("SMS is delivered!");
-            }
-          },
-        );
-      }
+    }
+    Box<Studentinfo> studentbox =
+        Hive.box<Studentinfo>(widget.classname + "-StudentList");
+    for (var i = 0; i < studentbox.length; i++) {
+      Studentinfo _studentinfo = studentbox.getAt(i);
+      SmsSender sender = new SmsSender();
+      String address = _studentinfo.phone_no;
+      SmsMessage message = new SmsMessage(address, messageEntered);
+      sender.sendSms(message);
+      message.onStateChanged.listen(
+        (state) {
+          if (state == SmsMessageState.Sent) {
+            print("SMS is sent!");
+          } else if (state == SmsMessageState.Delivered) {
+            print("SMS is delivered!");
+          } else if (state == SmsMessageState.Fail) {
+            _scaffoldkey.currentState.showSnackBar(
+                SnackBar(content: Text("Message not dilivered to $address")));
+          }
+        },
+      );
+    }
+    if (qId != null && qus != null) {
       Hive.box<Question>(widget.classname + "questionsSent").put(qId, qus);
       Hive.box<Question>(widget.classname + 'questions').delete(qId);
+    } else {
+      Box<MessageLog> messagelogdb =
+          Hive.box<MessageLog>(widget.classname + 'messageLogs');
+      MessageLog messageLog = MessageLog(messageEntered, "its You", true);
+      messagelogdb.add(messageLog);
     }
   }
 

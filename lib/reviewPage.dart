@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:hacksrm/models/question.dart';
+import 'package:hacksrm/top_bar.dart';
 import 'package:hive/hive.dart';
 
 class ReviewPage extends StatefulWidget {
@@ -25,42 +27,45 @@ class _ReviewPageState extends State<ReviewPage> {
     list[list.indexOf('wrong3')] = widget.wrong3;
     print(list);
     print(correctop);
-    return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              'Question ID : xxxx\n${widget.question}\n\n1) ${list[0]}\n2) ${list[1]}\n3) ${list[2]}\n4) ${list[3]}',
-              style: TextStyle(fontSize: 20),
+    return NeumorphicBackground(
+      padding: EdgeInsets.all(8),
+          child: Scaffold(
+        appBar:TopBar(title: 'Review',),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Question ID : xxxx\n${widget.question}\n\n1) ${list[0]}\n2) ${list[1]}\n3) ${list[2]}\n4) ${list[3]}',
+                style: TextStyle(fontSize: 20),
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                FlatButton.icon(
-                    onPressed: () async {
-                      Navigator.of(context).pop();
-                    },
-                    icon: Icon(Icons.edit),
-                    label: Text("Edit")),
-                FlatButton.icon(
-                    onPressed: () {
-                      final Question newQuestion = Question(widget.question,
-                          list[0], list[1], list[2], list[3], correctop);
-                      questionBox.add(newQuestion);
-                      onadded();
-                    },
-                    icon: Icon(Icons.add),
-                    label: Text("Add"))
-              ],
-            ),
-          )
-        ],
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FlatButton.icon(
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                      },
+                      icon: Icon(Icons.edit),
+                      label: Text("Edit")),
+                  FlatButton.icon(
+                      onPressed: () {
+                        final Question newQuestion = Question(widget.question,
+                            list[0], list[1], list[2], list[3], correctop);
+                        questionBox.add(newQuestion);
+                        onadded();
+                      },
+                      icon: Icon(Icons.add),
+                      label: Text("Add"))
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
