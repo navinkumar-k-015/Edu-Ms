@@ -19,10 +19,6 @@ void main() async {
   Hive.registerAdapter(MessageLogAdapter());
   runApp(MyApp());
 }
-// class ClassroomArguments{
-//   final String classroom;
-//   ClassroomArguments(this.classroom);
-// }
 
 class MyApp extends StatelessWidget {
   @override
@@ -36,12 +32,6 @@ class MyApp extends StatelessWidget {
           depth: 10,
           accentColor: Colors.black),
       home: MyHomePage(),
-      // routes: {'/': (context) => MyHomePage(),
-      // ClassroomArguments.routeName: (context) => ClassRoom(),
-      // '/class': (context) => ClassRoom(),
-      // '/': (context) => MyHomePage(),
-      // '/': (context) => MyHomePage(),
-      // },
     );
   }
 }
@@ -80,6 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
             )
           ],
         ),
+        // ignore: missing_required_param
         floatingActionButton: FloatingActionButton(
           child: NeumorphicButton(
             padding: EdgeInsets.all(18),

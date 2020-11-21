@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:hacksrm/models/question.dart';
 import 'package:hacksrm/models/studentResponse.dart';
+import 'package:hacksrm/top_bar.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sms/sms.dart';
@@ -25,122 +27,125 @@ class _IndividualReportState extends State<IndividualReport> {
     var total = questionBox.length;
     var correct = 0;
     var wrong = 0;
-    var ans = 0;
     Box<Studentinfo> student = Hive.box<Studentinfo>(widget.studentlist);
-    return Scaffold(
-      key: _scaffoldkey,
-      appBar: AppBar(
-        title: Text("Individual Report"),
-      ),
-      body: ValueListenableBuilder(
-          valueListenable: student.listenable(),
-          builder: (context, Box<Studentinfo> box, widget) {
-            return ListView.builder(
-              itemCount: box.length,
-              itemBuilder: (context, index) {
-                final studentinfo = box.getAt(index);
-                return ListTile(
-                  title: Text(studentinfo.name),
-                  subtitle: Text(studentinfo.phone_no),
-                  onTap: () async {
-                    await Hive.openBox<StudentResponse>(
-                        studentinfo.phone_no + "-Responses");
-                    var studentResponse = Hive.box<StudentResponse>(
-                        studentinfo.phone_no + "-Responses");
-                    correct = 0;
-                    wrong = 0;
-                    ans = box.length == null ? 0 : box.length;
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            content: Container(
-                              width: width * .8,
-                              height: height * .8,
-                              child: Column(
-                                children: [
-                                  Text(
-                                    "Responses",
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Divider(
-                                    thickness: 2.0,
-                                    color: Colors.blueAccent,
-                                  ),
-                                  ValueListenableBuilder(
-                                    valueListenable:
-                                        studentResponse.listenable(),
-                                    builder: (context, Box<StudentResponse> box,
-                                        child) {
-                                      return box.length == 0
-                                          ? Text(
-                                              'No Responses available!',
-                                              style: TextStyle(
-                                                  color: Colors.redAccent),
-                                            )
-                                          : ListView.builder(
-                                              shrinkWrap: true,
-                                              itemCount: box.length,
-                                              itemBuilder: (context, index) {
-                                                StudentResponse studentRes =
-                                                    box.getAt(index);
-                                                studentRes.result
-                                                    ? correct++
-                                                    : wrong++;
-                                                Question _question =
-                                                    questionBox.get(int.parse(
-                                                        studentRes.questionId));
-                                                return Column(
-                                                  children: [
-                                                    ListTile(
-                                                      title: Text(
-                                                        _question.question,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 1,
+    return NeumorphicBackground(
+      padding: EdgeInsets.all(8),
+      child: Scaffold(
+        key: _scaffoldkey,
+        appBar: TopBar(
+          title: "Individual Report",
+        ),
+        body: ValueListenableBuilder(
+            valueListenable: student.listenable(),
+            builder: (context, Box<Studentinfo> box, widget) {
+              return ListView.builder(
+                itemCount: box.length,
+                itemBuilder: (context, index) {
+                  final studentinfo = box.getAt(index);
+                  return ListTile(
+                    title: Text(studentinfo.name),
+                    subtitle: Text(studentinfo.phone_no),
+                    onTap: () async {
+                      await Hive.openBox<StudentResponse>(
+                          studentinfo.phone_no + "-Responses");
+                      var studentResponse = Hive.box<StudentResponse>(
+                          studentinfo.phone_no + "-Responses");
+                      correct = 0;
+                      wrong = 0;
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              content: Container(
+                                width: width * .8,
+                                height: height * .8,
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      "Responses",
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Divider(
+                                      thickness: 2.0,
+                                      color: Colors.blueAccent,
+                                    ),
+                                    ValueListenableBuilder(
+                                      valueListenable:
+                                          studentResponse.listenable(),
+                                      builder: (context,
+                                          Box<StudentResponse> box, child) {
+                                        return box.length == 0
+                                            ? Text(
+                                                'No Responses available!',
+                                                style: TextStyle(
+                                                    color: Colors.redAccent),
+                                              )
+                                            : ListView.builder(
+                                                shrinkWrap: true,
+                                                itemCount: box.length,
+                                                itemBuilder: (context, index) {
+                                                  StudentResponse studentRes =
+                                                      box.getAt(index);
+                                                  studentRes.result
+                                                      ? correct++
+                                                      : wrong++;
+                                                  Question _question =
+                                                      questionBox.get(int.parse(
+                                                          studentRes
+                                                              .questionId));
+                                                  return Column(
+                                                    children: [
+                                                      ListTile(
+                                                        title: Text(
+                                                          _question.question,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 1,
+                                                        ),
+                                                        trailing: studentRes
+                                                                .result
+                                                            ? Icon(
+                                                                Icons.check,
+                                                                color: Colors
+                                                                    .green,
+                                                              )
+                                                            : Icon(
+                                                                Icons.close,
+                                                                color:
+                                                                    Colors.red,
+                                                              ),
                                                       ),
-                                                      trailing: studentRes
-                                                              .result
-                                                          ? Icon(
-                                                              Icons.check,
-                                                              color:
-                                                                  Colors.green,
-                                                            )
-                                                          : Icon(
-                                                              Icons.close,
-                                                              color: Colors.red,
-                                                            ),
-                                                    ),
-                                                    Divider(
-                                                      thickness: 0.5,
-                                                      color: Colors.grey,
-                                                    )
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                    },
-                                  ),
-                                  RaisedButton(
-                                    child: Text('Send Report'),
-                                    onPressed: () {
-                                      sendSMS(studentinfo.phone_no, total, ans,
-                                          correct, wrong);
-                                      Navigator.pop(context);
-                                    },
-                                  )
-                                ],
+                                                      Divider(
+                                                        thickness: 0.5,
+                                                        color: Colors.grey,
+                                                      )
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                      },
+                                    ),
+                                    RaisedButton(
+                                      child: Text('Send Report'),
+                                      onPressed: () {
+                                        sendSMS(studentinfo.phone_no, total,
+                                            correct + wrong, correct, wrong);
+                                        Navigator.pop(context);
+                                      },
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        });
-                  },
-                );
-              },
-            );
-          }),
+                            );
+                          });
+                    },
+                  );
+                },
+              );
+            }),
+      ),
     );
   }
 

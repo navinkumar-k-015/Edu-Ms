@@ -106,7 +106,9 @@ class _StudentListState extends State<StudentList> {
         body: ValueListenableBuilder(
           valueListenable: studentbox.listenable(),
           builder: (context, Box<Studentinfo> box, child) {
-            return ListView.builder(
+            return box.length == 0 ? Align(
+              alignment: Alignment.topCenter,
+              child: Text('Please add students!', style: TextStyle(color: Colors.redAccent, fontSize: 17, fontWeight: FontWeight.bold),)) : ListView.builder(
               itemCount: box.length,
               itemBuilder: (context, index) {
                 final studentinfo = box.getAt(index);

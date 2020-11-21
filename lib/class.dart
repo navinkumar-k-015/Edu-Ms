@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:hacksrm/announcements.dart';
 import 'package:hacksrm/individualReport.dart';
 import 'package:hacksrm/live_class.dart';
 import 'package:hacksrm/make_questions.dart';
@@ -26,50 +27,22 @@ class ClassRoom extends StatelessWidget {
         body: GridView.count(
           crossAxisCount: 2,
           children: [
-            // ListTile(
-            //   leading: Icon(Icons.account_circle),
-            //   title: Text("Student List"),
-            //   onTap: () async {
-            //     await Hive.openBox<Studentinfo>(studentist);
-            //     print(studentist);
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //         builder: (context) => StudentList(studentist, classroom),
-            //       ),
-            //     );
-            //   },
-            // ),
-            // ListTile(
-            //   leading: Icon(Icons.assessment),
-            //   title: Text("Make questions"),
-            //   onTap: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //         builder: (context) => MakeQuestions(classroom),
-            //       ),
-            //     );
-            //   },
-            // ),
-            // ListTile(
-            //   leading: Icon(Icons.live_tv_outlined),
-            //   title: Text("Live Class"),
-            //   onTap: () async {
-            //     await Hive.openBox<MessageLog>(classroom + 'messageLogs');
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //         builder: (context) => LiveClass(classroom),
-            //       ),
-            //     );
-            //   },
-            // ),
-            PrettyTile(
-              'Announcement',
-              Icon(
-                Icons.settings_input_antenna,
-                size: 35,
+            InkWell(
+              onTap: () async {
+                await Hive.openBox<String>(classroom + "-Announcements");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Announcements(classroom),
+                  ),
+                );
+              },
+              child: PrettyTile(
+                'Announcement',
+                Icon(
+                  Icons.settings_input_antenna,
+                  size: 35,
+                ),
               ),
             ),
 
@@ -87,7 +60,7 @@ class ClassRoom extends StatelessWidget {
               child: PrettyTile(
                 'Student List',
                 Icon(
-                  Icons.live_tv_outlined,
+                  Icons.supervisor_account_outlined,
                   size: 35,
                 ),
               ),
@@ -121,7 +94,7 @@ class ClassRoom extends StatelessWidget {
                 child: PrettyTile(
                   'Live Class',
                   Icon(
-                    Icons.account_circle,
+                    Icons.live_tv_outlined,
                     size: 35,
                   ),
                 )),
@@ -133,7 +106,8 @@ class ClassRoom extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => IndividualReport(studentist, classroom),
+                    builder: (context) =>
+                        IndividualReport(studentist, classroom),
                   ),
                 );
               },
@@ -190,7 +164,6 @@ class PrettyTile extends StatelessWidget {
                         _title,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          //fontFamily: FitnessAppTheme.fontName,
                           fontSize: 20,
                           letterSpacing: 0.2,
                         ),
@@ -205,7 +178,6 @@ class PrettyTile extends StatelessWidget {
             top: 0,
             left: 0,
             child: SizedBox(width: 80, height: 80, child: _icon
-                //child: Image.asset(mealsListData.imagePath),
                 ),
           )
         ],
