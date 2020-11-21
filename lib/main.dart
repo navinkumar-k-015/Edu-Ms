@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hacksrm/class.dart';
 import 'package:hacksrm/models/question.dart';
+import 'package:hacksrm/models/studentResponse.dart';
 import 'package:hacksrm/models/studentinfo.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -11,6 +12,7 @@ void main() async {
   await Hive.openBox<String>("Classes");
   Hive.registerAdapter(StudentinfoAdapter());
   Hive.registerAdapter(QuestionAdapter());
+  Hive.registerAdapter(StudentResponseAdapter());
   runApp(MyApp());
 }
 // class ClassroomArguments{
@@ -22,6 +24,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -121,7 +124,8 @@ class _MyHomePageState extends State<MyHomePage> {
               return ListTile(
                 leading: Icon(Icons.class__outlined),
                 onTap: () async {
-                  await Hive.openBox<Studentinfo>(box.getAt(index) + '-StudentList');
+                  await Hive.openBox<Studentinfo>(
+                      box.getAt(index) + '-StudentList');
                   await Hive.openBox<Question>(box.getAt(index) + 'questions');
                   await Hive.openBox<Question>(
                       box.getAt(index) + 'questionsSent');

@@ -49,7 +49,7 @@ class _StudentListState extends State<StudentList> {
                           maxLength: 10,
                           decoration:
                               InputDecoration(hintText: "Student Phone"),
-                          onSaved: (newValue) => newstudentidphone = newValue,
+                          onSaved: (newValue) => newstudentidphone = "+91" + newValue,
                           validator: (value) {
                             if (value.length < 10) {
                               return 'like this difficult';
@@ -67,7 +67,6 @@ class _StudentListState extends State<StudentList> {
                                   final newstudentinfo = Studentinfo(
                                       newstudentidname, newstudentidphone);
                                   studentbox.add(newstudentinfo);
-                                  await Hive.openBox(newstudentidphone);
                                   Navigator.pop(context);
                                 }
                               },
@@ -129,13 +128,14 @@ class _StudentListState extends State<StudentList> {
                                 ),
                                 TextFormField(
                                   initialValue: studentinfo.phone_no,
-                                  maxLength: 10,
+                                  maxLength: 13,
                                   decoration: InputDecoration(
                                       hintText: "Student Phone"),
-                                  onSaved: (newValue) =>
-                                      newstudentidphone = newValue,
+                                  onSaved: (newValue) {
+                                    newstudentidphone = newValue;
+                                  },
                                   validator: (value) {
-                                    if (value.length < 10) {
+                                    if (value.length < 13) {
                                       return 'like this difficult';
                                     }
                                     return null;
@@ -195,5 +195,4 @@ class _StudentListState extends State<StudentList> {
       ),
     );
   }
-
 }
