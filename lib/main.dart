@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hacksrm/class.dart';
+import 'package:hacksrm/models/messagelogs.dart';
 import 'package:hacksrm/models/question.dart';
 import 'package:hacksrm/models/studentResponse.dart';
 import 'package:hacksrm/models/studentinfo.dart';
@@ -13,6 +14,7 @@ void main() async {
   Hive.registerAdapter(StudentinfoAdapter());
   Hive.registerAdapter(QuestionAdapter());
   Hive.registerAdapter(StudentResponseAdapter());
+  Hive.registerAdapter(MessageLogAdapter());
   runApp(MyApp());
 }
 // class ClassroomArguments{
