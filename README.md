@@ -15,15 +15,24 @@ An Offline Interactive Classroom
    - User friendly UI. 
    - 🔋 Batteries included 😁.
    
-   
-   <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Analysis.gif" width="400" height="800">
-   
-   <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Class.gif" width="400" height="800">
-   
-   <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Live%20class.gif" width="400" height="800">
-   
-   <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Student%20Report.gif" width="400" height="800">
-   
-   <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Students.gif" width="400" height="800">
-   
-   <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/announcement.gif" width="400" height="800">
+#   Main activities of our app:
+## Maintain a feasible and organized list of classes and students.
+<img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Class.gif" width="400" height="800"><br>
+<img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Students.gif" width="400" height="800"><br>
+
+## Make instant questions and get prepared beforehand.
+## Create announcements about the scheduled events or salient matters.
+<img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/announcement.gif" width="400" height="800"><br>
+
+## Like native classes, the instructor can have good interactions with the students.
+## Conduct live exams without internet and with an even weak network connection.
+<img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Live%20class.gif" width="400" height="800">br>
+## Instructor can have a quality graphical representation of the student responses for each question sent and all responses received.
+<img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Analysis.gif" width="400" height="800"> <br>
+
+## Spot who's cheating in the exam.
+
+## View and send individual overall reports of each student.
+<img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Student%20Report.gif" width="400" height="800"><br>
+
+## Has predefined prefixes for help and answering.
