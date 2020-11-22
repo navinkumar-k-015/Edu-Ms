@@ -25,7 +25,8 @@ An Offline Interactive Classroom
 <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/announcement.gif" width="400" height="800"><br>
 
 ## Conduct live exams without internet and with an even weak network connection.
-## Like native classes, the instructor can have good interactions with the students.
+## Like native classes, the instructor can have good interactions with the students and can sent personal messages.
+<img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Personal%20and%20Class%20Chat.gif" width="400" height="800"><br>
 
 ## Instructor can have a quality graphical representation of the student responses for each question sent and all responses received.
 <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Analysis.gif" width="400" height="800"> <br>
