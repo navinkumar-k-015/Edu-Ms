@@ -16,14 +16,14 @@ An Offline Interactive Classroom
    - 🔋 Batteries included 😁.
    
    
-   <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Analysis.gif">
+   <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Analysis.gif" width="400" height="800">
    
-   <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Class.gif">
+   <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Class.gif" width="400" height="800">
    
-   <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Live%20class.gif">
+   <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Live%20class.gif" width="400" height="800">
    
-   <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Student%20Report.gif">
+   <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Student%20Report.gif" width="400" height="800">
    
-   <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Students.gif">
+   <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Students.gif" width="400" height="800">
    
-   <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/announcement.gif">
+   <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/announcement.gif" width="400" height="800">
