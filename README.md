@@ -24,13 +24,14 @@ An Offline Interactive Classroom
 ## Create announcements about the scheduled events or salient matters.
 <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/announcement.gif" width="400" height="800"><br>
 
-## Like native classes, the instructor can have good interactions with the students.
 ## Conduct live exams without internet and with an even weak network connection.
-<img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Live%20class.gif" width="400" height="800">br>
+## Like native classes, the instructor can have good interactions with the students.
+
 ## Instructor can have a quality graphical representation of the student responses for each question sent and all responses received.
 <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Analysis.gif" width="400" height="800"> <br>
 
 ## Spot who's cheating in the exam.
+<img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Live%20class.gif" width="400" height="800">br>
 
 ## View and send individual overall reports of each student.
 <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Student%20Report.gif" width="400" height="800"><br>
