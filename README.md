@@ -38,3 +38,4 @@ An Offline Interactive Classroom
 <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Student%20Report.gif" width="400" height="800"><br>
 
 ## Has predefined prefixes for help and answering.
+<img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Prefixes.jpg">
