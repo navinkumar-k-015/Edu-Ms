@@ -21,6 +21,8 @@ An Offline Interactive Classroom
 <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Students.gif" width="400" height="800"><br>
 
 ## Make instant questions and get prepared beforehand.
+<img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/Question.gif" width="400" height="800"><br>
+
 ## Create announcements about the scheduled events or salient matters.
 <img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/announcement.gif" width="400" height="800"><br>
 
