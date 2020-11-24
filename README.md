@@ -1,7 +1,7 @@
 # Edu MS
 An Offline Interactive Classroom
 
-<img src = "https://github.com/mr-white-hat/Edu-Ms/blob/main/HackSRM.png"><br>
+<img src = "https://github.com/navinkumar-k-015/Edu-Ms/blob/main/HackSRM.png"><br>
 
 # Problem Statement - 
   Due to Covid-19,  the students got stuck in their homes, but most of them are facing network issues like no internet, low bandwidth and, truncated bandwidth caps.
